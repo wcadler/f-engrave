@@ -2895,10 +2895,12 @@ class Application(Frame):
                                 FORMAT = 'G0 X%%.%df Y%%.%df'%(dp,dp)
                                 self.gcode.append(FORMAT %(x1,y1))
                                 # drop cutter
-                                if (feed_str == plunge_str):
+                                #if (feed_str == plunge_str):
+                                if (0):
                                     self.gcode.append('G1 Z%s' %(depth_val))
                                 else:
                                     self.gcode.append('G1 Z%s F%s' %(depth_val, plunge_str))
+				    self.gcode.append('(BARF4)')
                                     g.set_feed(feed_str)
                                 lastx = x1
                                 lasty = y1
@@ -3060,7 +3062,8 @@ class Application(Frame):
                             # drop cutter to z depth
                             FORMAT = 'G1 Z%%.%df'  %(dp)
                             self.gcode.append(FORMAT %(z1))
-                                
+                            self.gcode.append('(BARF3)') 
+
                             lastx = x1
                             lasty = y1
                             lastz = z1
@@ -3085,16 +3088,19 @@ class Application(Frame):
             FORMAT = 'G0 X%%.%df Y%%.%df' %(dp,dp)
             self.gcode.append(FORMAT  %(-Radius_plot - self.Xzero + XOrigin, YOrigin - self.Yzero))
 
-            
-            if (feed_str == plunge_str):
+           
+            #if (feed_str == plunge_str):
+            if (0):
                 FEED_STRING = ""
             else:
                 FEED_STRING = " F" + plunge_str
                 g.set_feed(feed_str)
                 
             self.gcode.append('G1 Z%s' %(depth_val) + FEED_STRING)
-
-            if (feed_str == plunge_str):
+	    self.gcode.append('(BARF6)')
+	
+            #if (feed_str == plunge_str):
+            if (0):
                 FEED_STRING = ""
             else:
                 FEED_STRING = " F" + feed_str
@@ -3107,6 +3113,7 @@ class Application(Frame):
 
         for line in self.gpost.get().split('|'):
             self.gcode.append(line)
+	    self.gcode.append('(BARF7)')
 
     ################################################################################
 
@@ -3275,18 +3282,21 @@ class Application(Frame):
                         FORMAT = '%%.%df' %(dp)
                         depth_val = FORMAT %(z1)
 
-                        if (feed_current == plunge_str):
+                        #if (feed_current == plunge_str):
+                        if (0):
                             FEED_STRING = ""
                         else:
                             FEED_STRING = " F" + plunge_str
                             feed_current = plunge_str
                             
                         self.gcode.append("G1 Z%s" %(depth_val) + FEED_STRING)
-
-                        lastx=x1
+			self.gcode.append('(BARF1)')
+                        
+			lastx=x1
                         lasty=y1
                     else:
-                        if (feed_str == feed_current):
+                        #if (feed_str == feed_current):
+	    		if (0):
                             FEED_STRING = ""
                         else:
                             FEED_STRING = " F" + feed_str
@@ -3294,6 +3304,7 @@ class Application(Frame):
                         
                         FORMAT = 'G1 X%%.%df Y%%.%df' %(dp,dp)
                         self.gcode.append(FORMAT %(x1,y1) + FEED_STRING)
+			self.gcode.append('(BARF2)')
                         lastx=x1
                         lasty=y1
                     loop_old = loop
@@ -8874,8 +8885,9 @@ class Gcode:
         if y == None: y = self.lasty
         if z == None: z = self.lastz
 
-        if (self.feed != self.lastf):
-            fstring = self.feed
+        #if (self.feed != self.lastf):
+        if (1):
+            fstring = " "+self.feed
             self.lastf = self.feed
         FORMAT  =  "%%.%df" % (self.dp)
 
@@ -8913,7 +8925,7 @@ class Gcode:
             cmd = "".join([gcodestring, xstring, ystring, zstring, Rstring, fstring])
         else:
             cmd = "".join([gcodestring, xstring, ystring, zstring, Istring, Jstring, fstring])
-       
+      
         if cmd:
             self.write(cmd)
             
